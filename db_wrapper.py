@@ -70,17 +70,15 @@ class CyberScanTable:
             return None
         return task.to_dict()
 
-    def fetch_pending_tasks(self, process_bulk) -> List[Dict[str, Any]]:
+    def fetch_pending_tasks(self, num_tasks) -> List[Dict[str, Any]]:
         legal_tasks = list(filter(lambda task:
                                   task.status == TaskStatus.Accepted,
                                   self.table.values()))
         pending_tasks = [task.to_dict() for task in
-                            sorted(legal_tasks,
-                                   key=lambda task: task.created_at)]
-        if process_bulk or len(pending_tasks) == 0:
-            return pending_tasks
+                         sorted(legal_tasks,
+                         key=lambda task: task.created_at)]
+        return pending_tasks[:num_tasks]
 
-        return [pending_tasks[0]]
 
 # initialize MockDB
-cyber_scan_table = CyberScanTable()
+tasks_table = CyberScanTable()

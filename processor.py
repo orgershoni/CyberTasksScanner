@@ -4,6 +4,7 @@ from configs.config import app_url
 import sys
 import requests
 from typing import List, Dict, Any
+from configs.config import global_config as config
 
 EXECUTION_DURATION_SECS = 10
 
@@ -36,10 +37,11 @@ def bulk_process(tasks: List[Dict[str, Any]]):
 
 def listen_for_tasks():
     try:
-        params = {'bulk_process': 'false'}
-        r = requests.get(f'{app_url}/api/fetch_tasks', params=params)
+        params = {'num_tasks': config.get('max_tasks_to_process', 1)}
+        r = requests.get(f'{app_url}/api/fetch_tasks/', params=params)
         if r.status_code != 200:
             print(f'Failed to fetch tasks. Reason {r.json()}')
+            return
         tasks = r.json()
         print(f'Tasks are {tasks}')
         bulk_process(tasks)
@@ -54,9 +56,14 @@ def work():
         while True:
             listen_for_tasks()
     except KeyboardInterrupt:
-        pass
-        # Exit quietly
+        exit(0) # Exit quietly
 
 
 if __name__ == '__main__':
     work()
+
+
+# TODO:
+#  (2) Add postman schema
+#  (3) Save statuses in dynamoDB
+#  (4) Add README
