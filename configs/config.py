@@ -1,0 +1,8 @@
+global_config = {
+  "app_api_protocol": "http",
+  "app_api_host": "localhost",
+  "app_api_port": 3002
+}
+
+app_url = f'{global_config["app_api_protocol"]}://' \
+          f'{global_config["app_api_host"]}:{global_config["app_api_port"]}'
