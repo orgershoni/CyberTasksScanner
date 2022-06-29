@@ -19,8 +19,7 @@
    ```
 ## Usage
 > Refer to the [Postman](./CyberScanApp.postman_collection) schema to get
-> familiar with
- app's API calls.
+> familiar with app's API calls.
 1. `api/ingest` - The `ingest` endpoint expected a JSON body that specifies
  task parameters. I added this option in order to facilitate the `raise_error` field which
  can assist in testing the `Error` status. 
@@ -33,8 +32,8 @@ The system has 4 logical units:
 1. API app (app.py) - contains the endpoints.
 2. Processor (processor.py) - listens to above app, retrieves pending tasks
  and executed them.
-2. SQL DB (mock) - contains tasks data (`id`, `created_at`, `is_fetched
-`, `raise_error`\[a debug option\]).
+2. SQL DB (mock) - contains tasks data (`id`, `created_at`, `is_fetched`,
+`raise_error`\[a debug option\]).
 4. DynamoDB (mock) - contains tasks statuses. This separation was done to
  eliminate additional loads on status checks.
  
