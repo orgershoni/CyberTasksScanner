@@ -12,23 +12,29 @@ def ingest_task():
         mongo_status_table.init_entry(task['id'])
         return {'task_id': task['id']}, 200
     except Exception as e:
-        return {'message': f'could not ingest task. Reason {e}'}, 400
+        return {'message': f'Could not ingest task. Reason {e}'}, 400
 
 
 @app.route('/api/update_task/<task_id>', methods=['PATCH'])
 def update_task(task_id):
-    updated_fields = request.json
-    task = tasks_table.update(task_id, updated_fields)
-    if not task:
-        return {"message": f'task id {task_id} was not found'}, 404
-    return jsonify(task), 200
+    try:
+        updated_fields = request.get_json()
+        task = tasks_table.update(task_id, updated_fields)
+        if not task:
+            return {"message": f'task id {task_id} was not found'}, 404
+        return jsonify(task), 200
+    except Exception as e:
+        return {'message': f'Could not update task {task_id}.\nReason: {e}'}, 400
 
 
 @app.route('/api/status_check/<task_id>', methods=['GET'])
 def check_status(task_id):
-    status = mongo_status_table.get_status(task_id)
-    status = TaskStatus(status)
-    return {'status': status.name}, status.value
+    try:
+        status = mongo_status_table.get_status(task_id)
+        status = TaskStatus(status)
+        return {'status': status.name}, status.value
+    except Exception as e:
+        return {'message': f'Failed to check status of task {task_id}.\nReason: {e}'}, 400
 
 
 @app.route('/api/set_status/<task_id>/', methods=['PATCH'])
@@ -40,7 +46,7 @@ def set_task_status(task_id):
         status_name = TaskStatus(status).name
         return f'status of task {task_id} updated to {status_name}', 200
     except Exception as e:
-        return {"message": f'{e}'}, 404
+        return {"message": f'Failed to set status of task {e}.\nReason: {e}'}, 400
 
 
 @app.route('/api/fetch_tasks/', methods=['PATCH'])
@@ -52,7 +58,7 @@ def fetch_tasks():
             tasks_table.update(task['id'], {'fetched': True})
         return jsonify(tasks), 200
     except Exception as e:
-        return {'message': f'{e}'}, 400
+        return {'message': f'Failed to fetch tasks.\nReason:{e}'}, 400
 
 
 if __name__ == '__main__':
