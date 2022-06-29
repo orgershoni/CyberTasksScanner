@@ -68,5 +68,4 @@ if __name__ == '__main__':
 
 # TODO:
 #  (2) Add postman schema
-#  (3) Save statuses in dynamoDB
-#  (4) Add README
+#  (4) Add README (postman)

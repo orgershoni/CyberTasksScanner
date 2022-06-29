@@ -1,0 +1,190 @@
+{
+	"info": {
+		"_postman_id": "87779bf4-f211-4a73-975c-856c37b3158b",
+		"name": "At-Bay App",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20215261"
+	},
+	"item": [
+		{
+			"name": "Ingest Task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"raise_error\": false\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/api/ingest",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"ingest"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check Status",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}:{{port}}/api/status_check/:id",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"status_check",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "some_id"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Fetch Pending Tasks",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{host}}:{{port}}/api/fetch_tasks/?num_tasks=1",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"fetch_tasks",
+						""
+					],
+					"query": [
+						{
+							"key": "num_tasks",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Task",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"field1\": \"value1\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{host}}:{{port}}/api/update_task/:task_id",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"update_task",
+						":task_id"
+					],
+					"variable": [
+						{
+							"key": "task_id",
+							"value": "some-id"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set Status",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"url": {
+					"raw": "{{host}}:{{port}}/api/set_status/:task_id/?status=200",
+					"host": [
+						"{{host}}"
+					],
+					"port": "{{port}}",
+					"path": [
+						"api",
+						"set_status",
+						":task_id",
+						""
+					],
+					"query": [
+						{
+							"key": "status",
+							"value": "200"
+						}
+					],
+					"variable": [
+						{
+							"key": "task_id",
+							"value": "02fd8166-8e38-42f7-b7fe-b91367d1fe4e"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "host",
+			"value": "localhost",
+			"type": "string"
+		},
+		{
+			"key": "port",
+			"value": "3002",
+			"type": "string"
+		}
+	]
+}
