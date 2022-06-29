@@ -5,24 +5,24 @@ from typing import List, Dict, Any
 
 
 class TaskStatus(Enum):
-    Accepted = 0
-    Running = 1
-    Error = 2
-    Complete = 3
-    NotFound = 4
+    Accepted = 202
+    Running = 201
+    Error = 400
+    Complete = 200
+    NotFound = 404
 
 
 class CyberScanTask:
     def __init__(self):
         self.created_at = datetime.now()
-        self.status: TaskStatus = TaskStatus.Accepted
+        self.fetched = False
         self.id = str(uuid4())
         self.raise_error = False
 
     def to_dict(self):
         return {
             "created_at": str(self.created_at),
-            "status": self.status.value,
+            "fetched": self.fetched,
             "id": self.id,
             "raise_error": self.raise_error
         }
@@ -32,7 +32,7 @@ class CyberScanTask:
         task = CyberScanTask()
         task.created_at = dict_var['created_at']
         task.id = dict_var['id']
-        task.status = TaskStatus(dict_var['status'])
+        task.fetched = dict_var['fetched']
         task.raise_error = dict_var['raise_error']
         return task
 
@@ -71,8 +71,7 @@ class CyberScanTable:
         return task.to_dict()
 
     def fetch_pending_tasks(self, num_tasks) -> List[Dict[str, Any]]:
-        legal_tasks = list(filter(lambda task:
-                                  task.status == TaskStatus.Accepted,
+        legal_tasks = list(filter(lambda task: not task.fetched,
                                   self.table.values()))
         pending_tasks = [task.to_dict() for task in
                          sorted(legal_tasks,
@@ -80,5 +79,25 @@ class CyberScanTable:
         return pending_tasks[:num_tasks]
 
 
-# initialize MockDB
+class MongoDB:
+
+    def __init__(self):
+        self.table: Dict[str, int] = dict()
+
+    def init_entry(self, task_id):
+        if task_id not in self.table.keys():
+            self.table[task_id] = TaskStatus.Accepted.value
+        return self.table.get(task_id)
+
+    def set_status(self, task_id, status):
+        if task_id in self.table.keys():
+            self.table[task_id] = status
+        return self.table.get(task_id)
+
+    def get_status(self, task_id):
+        return self.table.get(task_id, TaskStatus.NotFound.value)
+
+
+# initialize Mock DBs
 tasks_table = CyberScanTable()
+mongo_status_table = MongoDB()

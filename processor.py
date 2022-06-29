@@ -1,31 +1,34 @@
 from db_wrapper import TaskStatus
 import time
 from configs.config import app_url
-import sys
 import requests
 from typing import List, Dict, Any
 from configs.config import global_config as config
 
 EXECUTION_DURATION_SECS = 10
+LISTEN_EVERY_SECS = 10
 
 
 def process_task(task: Dict[str, Any]):
-    task['status'] = TaskStatus.Running.value
-    update_url = f'{app_url}/api/update_task/{task["id"]}'
-    r = requests.patch(update_url, json=task)
+    update_url = f'{app_url}/api/set_status/{task["id"]}/'
+    r = requests.patch(update_url, params={
+        'status': TaskStatus.Running.value
+    })
     if r.status_code != 200:
-        print(f'Failed to update task {task["id"]}. Reason: {r.json()}')
+        print(f'Failed to update task {task["id"]}. Reason: {r.text}')
+
+    updated_status = None
     try:
         # Mocking execution of task
         time.sleep(EXECUTION_DURATION_SECS)
-        task['status'] = TaskStatus.Complete.value
+        updated_status = TaskStatus.Complete.value
         if task['raise_error']:
             raise Exception(f'Indented error occurred while processing task '
                             f'{task["id"]}')
     except Exception:
-        task['status'] = TaskStatus.Error.value
+        updated_status = TaskStatus.Error.value
     finally:
-        r = requests.patch(update_url, json=task)
+        r = requests.patch(update_url, params={'status': updated_status})
         if r.status_code != 200:
             print(f'Failed to update task {task["id"]}. Reason: {r.json()}')
 
@@ -38,7 +41,7 @@ def bulk_process(tasks: List[Dict[str, Any]]):
 def listen_for_tasks():
     try:
         params = {'num_tasks': config.get('max_tasks_to_process', 1)}
-        r = requests.get(f'{app_url}/api/fetch_tasks/', params=params)
+        r = requests.patch(f'{app_url}/api/fetch_tasks/', params=params)
         if r.status_code != 200:
             print(f'Failed to fetch tasks. Reason {r.json()}')
             return
@@ -46,9 +49,9 @@ def listen_for_tasks():
         print(f'Tasks are {tasks}')
         bulk_process(tasks)
     except Exception as e:
-        print(f'Error occurred while processing tasks: {e}', file=sys.stderr)
+        print(f'Error occurred while processing tasks: {e}')
     finally:
-        time.sleep(10)
+        time.sleep(LISTEN_EVERY_SECS)
 
 
 def work():
