@@ -18,6 +18,7 @@ class CyberScanTask:
         self.fetched = False
         self.id = str(uuid4())
         self.raise_error = False
+        # Add more fields here that may define a task
 
     def to_dict(self):
         return {
@@ -41,19 +42,19 @@ class CyberScanTable:
     def __init__(self):
         self.table: Dict[str, CyberScanTask] = dict()
 
-    def create(self, params) -> Dict[str, Any]:
-        scan = CyberScanTask()
-        as_dict = scan.to_dict()
-        as_dict = CyberScanTable._update_task_fields(as_dict, params)
-        self.table[scan.id] = CyberScanTask.from_dict(as_dict)
-        return as_dict
-
     @staticmethod
     def _update_task_fields(task, updated_fields):
         for (field, value) in updated_fields.items():
             if field in task.keys():
                 task[field] = value
         return task
+
+    def create(self, params) -> Dict[str, Any]:
+        scan = CyberScanTask()
+        as_dict = scan.to_dict()
+        as_dict = CyberScanTable._update_task_fields(as_dict, params)
+        self.table[scan.id] = CyberScanTask.from_dict(as_dict)
+        return as_dict
 
     def update(self, task_id, updated_fields: Dict[str, Any]) -> Dict[str,
                                                                       Any]:
@@ -79,7 +80,7 @@ class CyberScanTable:
         return pending_tasks[:num_tasks]
 
 
-class MongoDB:
+class MongoDBTable:
 
     def __init__(self):
         self.table: Dict[str, int] = dict()
@@ -100,4 +101,4 @@ class MongoDB:
 
 # initialize Mock DBs
 tasks_table = CyberScanTable()
-mongo_status_table = MongoDB()
+mongo_status_table = MongoDBTable()

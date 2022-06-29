@@ -3,6 +3,7 @@ global_config = {
   "app_api_host": "localhost",
   "app_api_port": 3002,
   "max_tasks_to_process": 1  # How many tasks should be processed in bulk
+                             # Increase this value to reduce DB calls
 }
 
 app_url = f'{global_config["app_api_protocol"]}://' \
